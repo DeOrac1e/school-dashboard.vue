@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>God's-Eye Primary — Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+  <div id="app" class="shell" :data-theme="theme">
+
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="school-name">God's-Eye College</div>
+        <div class="school-type">Elementary School</div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-label">Menu</div>
+        <button v-for="item in menuItems" 
+                :key="item.id"
+                :class="['nav-item', { active: activePage === item.id }]"
+                @click="activePage = item.id">
+          <span class="nav-icon"></span> {{ item.label }}
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="admin-row">
+          <div class="admin-avatar">MO</div>
+          <div>
+            <div class="admin-name">Mr. Oracle</div>
+            <div class="admin-role">School Admin</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main">
+      <div class="topbar">
+        <div>
+          <div class="topbar-title">Good morning, Mr. Oracle</div>
+          <div class="topbar-date">{{ formattedDate }} · Term 2, Week 11</div>
+        </div>
+        <div class="topbar-right">
+          <button class="btn" @click="showNotif = !showNotif">
+            Notifications
+            <span v-if="showNotif" class="notif-dot"></span>
+          </button>
+          <button class="btn" @click="toggleTheme">
+            {{ theme === 'dark' ? 'Light Mode' : 'Dark Mode' }}
+          </button>
+          <button class="btn primary">+ New Student</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="stats-grid">
+          <div v-for="stat in stats" :key="stat.label" class="stat-card">
+            <div class="stat-label">{{ stat.label }}</div>
+            <div class="stat-value">{{ stat.value }}</div>
+            <div :class="['stat-change', stat.trend]">{{ stat.desc }}</div>
+          </div>
+        </div>
+
+        <div class="mid-grid">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Attendance by class</span>
+              <button class="card-action">View all</button>
+            </div>
+            <div class="att-bars">
+              <div v-for="cls in attendanceData" :key="cls.label" class="att-row">
+                <span class="att-class">{{ cls.label }}</span>
+                <div class="att-track">
+                  <div class="att-fill" 
+                       :style="{ width: cls.pct + '%', background: cls.pct < 90 ? '#E24B4A' : '#378ADD' }">
+                  </div>
+                </div>
+                <span class="att-pct">{{ cls.pct }}%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Recent students</span>
+              <button class="card-action">View all</button>
+            </div>
+            <div class="student-list">
+              <div v-for="s in students" :key="s.name" class="student-row">
+                <div class="s-avatar" :style="{ background: s.bg, color: s.fg }">{{ s.initials }}</div>
+                <div>
+                  <div class="s-name">{{ s.name }}</div>
+                  <div class="s-class">{{ s.cls }}</div>
+                </div>
+                <span :class="['s-status', s.status]">{{ s.status }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bottom-grid">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">This week's timetable (Year 3B)</span>
+            </div>
+            <div class="timetable">
+              <div v-for="(daySchedule, index) in schedule" :key="days[index]">
+                <div class="tt-day-label">{{ days[index] }}</div>
+                <div v-for="slot in daySchedule" 
+                     :key="slot" 
+                     :class="['tt-slot', slot]">
+                  {{ slotLabels[slot] }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Announcements</span>
+              <button class="card-action" @click="postAnnouncement">Post new</button>
+            </div>
+            <div class="announce-list">
+              <div v-for="a in announcements" :key="a.title" class="announce-item">
+                <span :class="['announce-tag', a.tag]">{{ a.label }}</span>
+                <div class="announce-title">{{ a.title }}</div>
+                <div class="announce-sub">{{ a.sub }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
